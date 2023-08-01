@@ -63,7 +63,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function checkLoggedIn(req, res, next){
-    const isLoggedIn = true;
+    console.log('Current user is: ' , req.user)
+
+    // req.isAuthenticated() is a passport flag
+    const isLoggedIn = req.isAuthenticated() && req.user;
     if(!isLoggedIn){
         return res.status(401).json({
             error: 'You must log in!'
@@ -89,7 +92,10 @@ app.get('/auth/google/callback',
     }
 );
 
-app.get('/auth/logout', (req,res) => {})
+app.get('/auth/logout', (req,res) => {
+    req.logout(); //Removes req.user and clears any logged in session
+    return res.redirect('/');
+})
 
 app.get('/secret', checkLoggedIn, (req, res) => {
     res.send('Your personal secret value is 42!');
